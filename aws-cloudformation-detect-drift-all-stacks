@@ -1,0 +1,7 @@
+#!/bin/bash
+
+for stackName in $(aws $@ cloudformation list-stacks | jq -r '.StackSummaries[] | select(.DriftInformation.StackDriftStatus=="NOT_CHECKED") | select(.StackStatus | contains("DELETE") | not) | .StackName')
+do
+    echo $stackName
+    aws $@ cloudformation detect-stack-drift --stack-name $stackName
+done
